@@ -8,6 +8,7 @@
 #include <algorithm>
 
 //#define DEBUG
+//#define DEBUG_BALANCE
 
 /**
  * A templated class for a Node in a search tree.
@@ -261,7 +262,7 @@ protected:
     // Add helper functions here
     static Node<Key, Value>* successor(Node<Key, Value>* current);
     void clearHelper(Node<Key,Value>* root);
-    bool isBalancedHelper(Node<Key,Value>* root) const;
+    int isBalancedHelper(Node<Key,Value>* root) const;
     void editParentToRemove(Node<Key,Value>* curr, Node<Key,Value>* parent, Node<Key,Value>* newval);
 
     // for debugging:
@@ -551,7 +552,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
                 
                 parent = curr->getParent(); // remember to get new parent
                 
-                // we need to check if predecessor had left child before deleting curr.
+                // we need to check if predecessor had left child before deleting it.
                 if (curr->getLeft()) {
                     editParentToRemove(curr, parent, curr->getLeft());
                     curr->getLeft()->setParent(parent);
@@ -753,24 +754,24 @@ Node<Key, Value>* BinarySearchTree<Key, Value>::internalFind(const Key& key) con
 template<typename Key, typename Value>
 bool BinarySearchTree<Key, Value>::isBalanced() const
 {
-    return isBalancedHelper(root_);
+    #ifdef DEBUG_BALANCE
+    print();
+    #endif
+    return isBalancedHelper(root_) != -1;
 }
 
 
 template<typename Key, typename Value>
-bool BinarySearchTree<Key, Value>::isBalancedHelper(Node<Key,Value>* root) const
+int BinarySearchTree<Key, Value>::isBalancedHelper(Node<Key,Value>* root) const
 {
-    if (!root) return true;
+    if (!root) return 0;
 
-    bool leftTree = isBalancedHelper(root->getLeft());
-    bool rightTree = isBalancedHelper(root->getRight());
-    if (!leftTree || !rightTree) return false;
+    int leftTree = isBalancedHelper(root->getLeft());
+    int rightTree = isBalancedHelper(root->getRight());
+    if (leftTree == -1 || rightTree == -1) return -1;
 
-    if (root->getParent() == NULL) return true;
-    if (root->getParent()->getParent() == NULL) return true;
-
-    if (root->getParent()->getParent()->numChildren() == 1) return false;
-    return true;
+    if (std::abs(leftTree - rightTree) > 1) return -1;
+    return std::max(leftTree, rightTree) + 1;
 }
 
 
