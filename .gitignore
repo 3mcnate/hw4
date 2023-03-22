@@ -3,4 +3,5 @@ bst-test
 equal-paths-test
 *.o
 .vscode/
+avl-test
 
