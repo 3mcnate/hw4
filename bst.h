@@ -471,8 +471,8 @@ template<class Key, class Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &keyValuePair)
 {
     Node<Key, Value>* curr = root_;
-    Key& key = keyValuePair.first;
-    Value& value = keyValuePair.second;
+    const Key& key = keyValuePair.first;
+    const Value& value = keyValuePair.second;
 
     #ifdef DEBUG
     std::cout << "Inserting pair (" << key << ", " << value << ")" << std::endl; 
